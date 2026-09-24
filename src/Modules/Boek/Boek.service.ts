@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BOEK_REPO } from '../../Database/Interfaces/IBoek.repository.js';
-import type { IBoekRepository } from '../../Database/Interfaces/IBoek.repository.js';
+import { BOEK_REPO } from './Repo/IBoek.repository.js';
+import type { IBoekRepository } from './Repo/IBoek.repository.js';
 
 @Injectable()
 export class BoekService {

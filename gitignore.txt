@@ -1,0 +1,30 @@
+# NestJS / build output
+/dist
+/node_modules
+/build
+/tmp
+/coverage
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# dotenv env files
+.env
+.env.*
+!.env.example
+
+# temp/cache
+.temp
+.tmp
+.cache
+
+# editor / OS
+.vscode/
+.DS_Store
+Thumbs.db

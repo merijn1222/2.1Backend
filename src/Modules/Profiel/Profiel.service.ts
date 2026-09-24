@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PROFIEL_REPO } from '../../Database/Interfaces/IProfiel.repository.js';
-import type { IProfielRepository } from '../../Database/Interfaces/IProfiel.repository.js';
+import { PROFIEL_REPO } from './Repo/IProfiel.repository.js';
+import type { IProfielRepository } from './Repo/IProfiel.repository.js';
 
 @Injectable()
 export class ProfielService {
