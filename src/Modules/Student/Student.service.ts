@@ -40,4 +40,8 @@ export class StudentService {
   async getMyStudents(teacherId: string): Promise<Student[]> {
     return this.repo.getMyStudents(teacherId);
   }
+
+  async getAllStudents(): Promise<Student[]> {
+    return this.repo.getAllStudents();
+  }
 }

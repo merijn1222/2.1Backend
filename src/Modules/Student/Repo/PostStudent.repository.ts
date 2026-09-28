@@ -6,7 +6,12 @@ import { Student } from "../Model/Student.js";
 
 @Injectable()
 export class PostStudentRepository implements IStudentRepository {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
+    getAllStudents(): Promise<Student[]> {
+        return this.prisma.student.findMany({
+            select: { id: true, name: true }
+        });
+    }
 
     async setTeacher(dto: SetTeacherDto): Promise<string> {
         const student = await this.prisma.student.update({
@@ -22,5 +27,20 @@ export class PostStudentRepository implements IStudentRepository {
             select: { id: true, name: true },
             where: { teacherId: teacherId }
         })
+    }
+
+    async getStudentWithTeacher(studentId: string, teacherId: string): Promise<boolean> {
+        const student = await this.prisma.student.findFirst({
+            where: {
+                id: studentId,
+                teacherId: teacherId,
+            },
+            select: { id: true },
+        });
+
+        if (student) {
+            return true;
+        }
+        return false;
     }
 }

@@ -15,14 +15,18 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginResponse } from './Models/Response/LoginResponse.js';
 import { LoginDto } from './Models/DTO/LoginDto.js';
 import { RegisterResponse } from './Models/Response/RegisterResponse.js';
+import { READINGLIST_REPO } from '../ReadingList/Repo/IReadingList.repository.js';
+import type { IReadingListRepository } from '../ReadingList/Repo/IReadingList.repository.js';
 
 @Injectable()
 export class AuthService {
-  constructor (
+  constructor(
     @Inject(AUTH_REPO)
     private readonly repo: IAuthRepository,
+    @Inject(READINGLIST_REPO)
+    private readonly readingListRepo: IReadingListRepository,
     private readonly jwtService: JwtService,
-  ){}
+  ) { }
 
   async login(dto: LoginDto): Promise<AuthResponse> {
     let response: LoginResponse;
@@ -63,21 +67,35 @@ export class AuthService {
   }
 
   async createUser(dto: UserDto): Promise<AuthResponse> {
+
+    
+
     dto.password = await bcrypt.hash(dto.password, 12)
 
-    let response: RegisterResponse;
+    let response: RegisterResponse | undefined;
 
     try {
       response = await this.repo.createUser(dto);
+
+      if (!response.studentId) {
+        throw new InternalServerErrorException();
+      }
+
+      await this.readingListRepo.createReadingList(response.studentId);
+      
     } catch (error: unknown) {
+      if (response) {
+        await this.repo.deleteUser(response.id)
+        throw new InternalServerErrorException('Fout bij leeslijst aanmaken')
+      } 
+
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
         throw new ConflictException('Gebruikersnaam al in gebruik');
       }
-      else
-        { throw new InternalServerErrorException('Er is een onverwachte fout opgetreden') }
+      else { throw new InternalServerErrorException('Er is een onverwachte fout opgetreden') }
     }
 
     const payload = {

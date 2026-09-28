@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const username = process.env.ADMIN_USERNAME;
+  const username = process.env.ADMIN_USERNAME?.toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
 
   if (!username || !password) {

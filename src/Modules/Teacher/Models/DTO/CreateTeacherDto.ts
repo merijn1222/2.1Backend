@@ -1,12 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTeacherDto {
-  @ApiProperty({ example: 'teacher1' })
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'Username for the teacher account.',
+    example: 'teacher1',
+  })
   username!: string;
 
-  @ApiProperty({ example: 'temporary-password' })
+  @ApiProperty({
+    type: String,
+    required: true,
+    format: 'password',
+    writeOnly: true,
+    description: 'Initial password for the teacher account.',
+    example: 'example-password',
+  })
   password!: string;
 
-  @ApiProperty({ example: 'John Teacher' })
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'Display name for the teacher.',
+    example: 'John Teacher',
+  })
   name!: string;
 }

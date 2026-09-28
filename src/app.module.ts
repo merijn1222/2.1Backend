@@ -1,27 +1,39 @@
 import { Module } from '@nestjs/common';
-import { BoekModule } from './Modules/Boek/Boek.module.js';
+import { LiteratureModule } from './Modules/Literature/Literature.module.js';
 import { DbModule } from './Db.module.js';
 import { AuthModule } from './Modules/Auth/Auth.module.js';
-import { ProfielModule } from './Modules/Profiel/Profiel.module.js';
-import { ConfigModule } from '@nestjs/config';
+import { ReadingProfileModule } from './Modules/ReadingProfile/ReadingProfile.module.js';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { StudentModule } from './Modules/Student/Student.module.js';
 import { TeacherModule } from './Modules/Teacher/Teacher.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './Modules/Auth/Guards/Auth.Guard.js';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ReadingListModule } from './Modules/ReadingList/ReadingList.module.js';
 
 @Module({
-  imports: [BoekModule,
-            AuthModule,
-            ProfielModule,
-            StudentModule,
-            TeacherModule,
-            DbModule,
-            ConfigModule.forRoot({
-              isGlobal: true,
-            })],
+  imports: [
+    LiteratureModule,
+    AuthModule,
+    ReadingProfileModule,
+    StudentModule,
+    TeacherModule,
+    ReadingListModule,
+    DbModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.getOrThrow<string>('MONGO_DATABASE_URL'),
+      }),
+    }),
+  ],
   providers: [{
     provide: APP_GUARD,
     useClass: AuthGuard,
   }]
 })
-export class AppModule {}
+export class AppModule { }

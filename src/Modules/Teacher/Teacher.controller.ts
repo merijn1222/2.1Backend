@@ -5,7 +5,9 @@ import { Roles } from '../Auth/Guards/Decorators/Roles.Decorator.js';
 import { RolesGuard } from '../Auth/Guards/Roles.Guard.js';
 import { CreateTeacherDto } from './Models/DTO/CreateTeacherDto.js';
 import type { AuthenticatedRequest } from '../Auth/Guards/AuthenticatedRequest.js';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
 @Controller('/teacher')
 export class TeacherController {
 	constructor(private readonly teacherService: TeacherService) {}

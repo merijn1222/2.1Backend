@@ -9,4 +9,6 @@ export interface IAuthRepository {
     createUser(dto: UserDto): Promise<RegisterResponse>;
 
     login(username: string): Promise<LoginResponse>;
+
+    deleteUser(userId: string): Promise<void>;
 }

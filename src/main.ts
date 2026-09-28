@@ -9,6 +9,10 @@ async function bootstrap() {
     .setTitle("LU1 API")
     .setDescription("Backend API documentation")
     .setVersion("1.0")
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(

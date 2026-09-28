@@ -9,42 +9,42 @@ import { RegisterResponse } from "../Models/Response/RegisterResponse.js";
 export class PostAuthRepository implements IAuthRepository {
   constructor(private readonly prisma: PrismaService) { }
 
- async createUser(dto: UserDto): Promise<RegisterResponse> {
-  const user = await this.prisma.$transaction(async (tx) => {
-    const createdUser = await tx.user.create({
-      data: {
-        username: dto.username.toLowerCase(),
-        passwordHash: dto.password,
-        role: 'STUDENT',
-      },
-      select: {
-        id: true,
-        username: true,
-        role: true,
-      },
+  async createUser(dto: UserDto): Promise<RegisterResponse> {
+    const user = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          username: dto.username.toLowerCase(),
+          passwordHash: dto.password,
+          role: 'STUDENT',
+        },
+        select: {
+          id: true,
+          username: true,
+          role: true,
+        },
+      });
+
+      const createdStudent = await tx.student.create({
+        data: {
+          name: dto.name,
+          userId: createdUser.id,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return {
+        id: createdUser.id,
+        username: createdUser.username,
+        role: createdUser.role,
+        studentId: createdStudent.id,
+        teacherId: null,
+      };
     });
 
-    const createdStudent = await tx.student.create({
-      data: {
-        name: dto.name,
-        userId: createdUser.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    return {
-      id: createdUser.id,
-      username: createdUser.username,
-      role: createdUser.role,
-      studentId: createdStudent.id,
-      teacherId: null,
-    };
-  });
-  
-  return user;
-}
+    return user;
+  }
 
   async login(username: string): Promise<LoginResponse> {
     const user = await this.prisma.user.findUniqueOrThrow({
@@ -77,5 +77,17 @@ export class PostAuthRepository implements IAuthRepository {
       studentId: user.student?.id ?? null,
       teacherId: user.teacher?.id ?? null,
     };
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.student.delete({
+        where: { userId },
+      });
+
+      await tx.user.delete({
+        where: { id: userId },
+      });
+    });
   }
 }
