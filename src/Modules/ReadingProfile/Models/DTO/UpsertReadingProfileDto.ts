@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { DESIRED_LENGTHS, type DesiredLength } from '../ReadingProfile.schema.js';
 
 export class UpsertReadingProfileDto {
 	@ApiProperty({
@@ -26,12 +27,12 @@ export class UpsertReadingProfileDto {
 	themes!: string[];
 
 	@ApiProperty({
-		type: String,
+		enum: DESIRED_LENGTHS,
 		required: true,
 		description: 'Preferred length of literature.',
-		example: 'Short',
+		example: 'short',
 	})
-	desiredLength!: string;
+	desiredLength!: DesiredLength;
 
 	@ApiProperty({
 		type: String,

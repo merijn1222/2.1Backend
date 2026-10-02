@@ -51,6 +51,7 @@ export class ReadingProfileController {
   @ApiOperation({ operationId: 'upsertReadingProfile' })
   @ApiCreatedResponse({ description: 'Reading profile created or updated', type: ReadingProfile })
   @ApiUnauthorizedResponse({ description: 'Missing or invalid access token', type: ApiErrorResponseDto })
+  @ApiBadRequestResponse({ description: 'Desired length is required', type: ApiErrorResponseDto })
   @ApiForbiddenResponse({ description: 'Student role required', type: ApiErrorResponseDto })
   @ApiInternalServerErrorResponse({ description: 'Unexpected server error', type: ApiErrorResponseDto })
   @Post()

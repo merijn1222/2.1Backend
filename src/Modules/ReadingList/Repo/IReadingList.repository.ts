@@ -32,7 +32,7 @@ export interface IReadingListRepository {
   addRating(
     studentId: string,
     literatureId: string,
-    rating: number,
+    rating: number | undefined,
     read: boolean,
   ): Promise<AddRatingResult>;
 }

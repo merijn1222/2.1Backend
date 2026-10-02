@@ -2,6 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
+export const DESIRED_LENGTHS = ['short', 'medium', 'long'] as const;
+export type DesiredLength = (typeof DESIRED_LENGTHS)[number];
+
 @Schema({ versionKey: false })
 export class ReadingProfile {
 	@ApiProperty({ type: String, description: 'MongoDB ObjectId' })
@@ -23,9 +26,9 @@ export class ReadingProfile {
 	@Prop({ type: [String], default: [], required: true })
 	themes: string[];
 
-	@ApiProperty()
-	@Prop({ type: String, required: true })
-	desiredLength: string;
+	@ApiProperty({ enum: DESIRED_LENGTHS })
+	@Prop({ type: String, enum: DESIRED_LENGTHS, required: true })
+	desiredLength: DesiredLength;
 
 	@ApiProperty()
 	@Prop({ type: String, required: true })

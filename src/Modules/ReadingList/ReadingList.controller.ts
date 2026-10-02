@@ -29,7 +29,7 @@ import {
 import { RolesGuard } from '../Auth/Guards/Roles.Guard.js';
 import { Roles } from '../Auth/Guards/Decorators/Roles.Decorator.js';
 import type { AuthenticatedRequest } from '../Auth/Guards/AuthenticatedRequest.js';
-import type { AddRatingDto } from './Models/DTO/AddRatingDto.js';
+import { AddRatingDto } from './Models/DTO/AddRatingDto.js';
 
 @ApiBearerAuth('access-token')
 @Controller('/readinglist')

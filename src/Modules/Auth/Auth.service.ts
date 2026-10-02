@@ -67,9 +67,6 @@ export class AuthService {
   }
 
   async createUser(dto: UserDto): Promise<AuthResponse> {
-
-    
-
     dto.password = await bcrypt.hash(dto.password, 12)
 
     let response: RegisterResponse | undefined;
@@ -85,6 +82,7 @@ export class AuthService {
       
     } catch (error: unknown) {
       if (response) {
+        console.error('Creating reading list failed:', error);
         await this.repo.deleteUser(response.id)
         throw new InternalServerErrorException('Fout bij leeslijst aanmaken')
       } 

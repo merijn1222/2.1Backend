@@ -12,13 +12,13 @@ export class AddRatingDto {
 
   @ApiProperty({
     type: Number,
-    required: true,
+    required: false,
     minimum: 1,
     maximum: 5,
-    description: 'Integer rating from 1 to 5.',
+    description: 'Integer rating from 1 to 5. Omit to keep the current rating; it is cleared when read is false.',
     example: 4,
   })
-  rating!: number;
+  rating?: number;
 
   @ApiProperty({
     type: Boolean,

@@ -133,22 +133,27 @@ export class MongoReadingListRepository
   async addRating(
     studentId: string,
     literatureId: string,
-    rating: number,
+    rating: number | undefined,
     read: boolean,
   ): Promise<AddRatingResult> {
     const literatureObjectId = new Types.ObjectId(literatureId);
+    const update: Record<string, Record<string, unknown>> = {
+      $set: { 'items.$.read': read },
+    };
+
+    if (!read) {
+      update.$unset = { 'items.$.rating': '' };
+    } else if (rating !== undefined) {
+      update.$set['items.$.rating'] = rating;
+    }
+
     const readingList = await this.readingListModel
       .findOneAndUpdate(
         {
           studentId,
           'items.literatureId': literatureObjectId,
         },
-        {
-          $set: {
-            'items.$.rating': rating,
-            'items.$.read': read,
-          },
-        },
+        update,
         { returnDocument: 'after', runValidators: true },
       )
       .populate('items.literatureId')

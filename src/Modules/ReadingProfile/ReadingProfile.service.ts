@@ -1,8 +1,9 @@
 import {
-  Injectable,
   Inject,
   InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
+  Injectable,
 } from '@nestjs/common';
 import { READINGPROFILE_REPO } from './Repo/IReadingProfile.repository.js';
 import type { IReadingProfileRepository } from './Repo/IReadingProfile.repository.js';
@@ -38,6 +39,12 @@ export class ReadingProfileService {
     studentId: string,
     profile: UpsertReadingProfileDto,
   ): Promise<ReadingProfileDocument> {
+    if (!profile.desiredLength || !['short', 'medium', 'long'].includes(profile.desiredLength)) {
+      throw new BadRequestException(
+        'Desired length is required',
+      );
+    }
+
     try {
       return await this.repo.upsertReadingProfile(studentId, profile);
     } catch {

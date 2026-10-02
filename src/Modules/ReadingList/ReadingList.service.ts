@@ -90,10 +90,11 @@ export class ReadingListService {
     }
 
     if (
-      typeof dto.rating !== 'number' ||
-      !Number.isInteger(dto.rating) ||
-      dto.rating < 1 ||
-      dto.rating > 5
+      dto.rating !== undefined &&
+      (typeof dto.rating !== 'number' ||
+        !Number.isInteger(dto.rating) ||
+        dto.rating < 1 ||
+        dto.rating > 5)
     ) {
       throw new BadRequestException('rating must be an integer between 1 and 5');
     }
