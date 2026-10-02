@@ -27,7 +27,7 @@ export class MongoReadingProfileRepository implements IReadingProfileRepository 
             .findOneAndUpdate(
                 { studentId },
                 { $set: profile },
-                { new: true, upsert: true, runValidators: true },
+                { returnDocument: 'after', upsert: true, runValidators: true },
             )
             .exec();
     }

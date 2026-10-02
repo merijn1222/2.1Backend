@@ -1,8 +1,9 @@
 {
   "version": "0.2.0",
   "configurations": [
+
     {
-      "name": "Attach to Nest debug",
+      "name": "Attach to Vue debug",
       "type": "node",
       "request": "attach",
       "port": 9229,

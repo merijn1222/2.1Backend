@@ -13,6 +13,11 @@ export type RemoveLiteratureResult =
   | { status: 'reading-list-not-found' }
   | { status: 'literature-not-in-list' };
 
+export type AddRatingResult =
+  | { status: 'rated'; readingList: ReadingListDocument }
+  | { status: 'reading-list-not-found' }
+  | { status: 'literature-not-in-list' };
+
 export interface IReadingListRepository {
   getReadingList(studentId: string): Promise<ReadingListDocument | null>;
   createReadingList(studentId: string): Promise<void>;
@@ -24,4 +29,10 @@ export interface IReadingListRepository {
     studentId: string,
     literatureId: string,
   ): Promise<RemoveLiteratureResult>;
+  addRating(
+    studentId: string,
+    literatureId: string,
+    rating: number,
+    read: boolean,
+  ): Promise<AddRatingResult>;
 }

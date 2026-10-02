@@ -5,13 +5,29 @@ import type { AuthenticatedRequest } from '../Auth/Guards/AuthenticatedRequest.j
 import { Roles } from '../Auth/Guards/Decorators/Roles.Decorator.js';
 import { RolesGuard } from '../Auth/Guards/Roles.Guard.js';
 import { Student } from './Model/Student.js';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiErrorResponseDto } from '../ApiErrorResponseDto.js';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @ApiBearerAuth('access-token')
 @Controller('/student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
+  @ApiOperation({ operationId: 'getMyStudents' })
+  @ApiOkResponse({ description: 'Students retrieved', type: Student, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid access token', type: ApiErrorResponseDto })
+  @ApiForbiddenResponse({ description: 'Teacher role required', type: ApiErrorResponseDto })
+  @ApiInternalServerErrorResponse({ description: 'Unexpected server error', type: ApiErrorResponseDto })
   @Get('/my-students')
   @Roles('TEACHER')
   @UseGuards(RolesGuard)
@@ -19,6 +35,11 @@ export class StudentController {
     return this.studentService.getMyStudents(request.user.teacherId!)
   }
 
+  @ApiOperation({ operationId: 'getAllStudents' })
+  @ApiOkResponse({ description: 'Students retrieved', type: Student, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid access token', type: ApiErrorResponseDto })
+  @ApiForbiddenResponse({ description: 'Admin role required', type: ApiErrorResponseDto })
+  @ApiInternalServerErrorResponse({ description: 'Unexpected server error', type: ApiErrorResponseDto })
   @Get('/all')
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
@@ -26,7 +47,14 @@ export class StudentController {
     return this.studentService.getAllStudents();
   }
 
-  @Post('/setteacher/:teacherid')
+  @ApiOperation({ operationId: 'assignTeacherToStudent' })
+  @ApiCreatedResponse({ description: 'Teacher assigned to student', type: String })
+  @ApiBadRequestResponse({ description: 'Teacher ID must be a UUID', type: ApiErrorResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Missing or invalid access token', type: ApiErrorResponseDto })
+  @ApiForbiddenResponse({ description: 'Student role required', type: ApiErrorResponseDto })
+  @ApiNotFoundResponse({ description: 'Teacher not found', type: ApiErrorResponseDto })
+  @ApiInternalServerErrorResponse({ description: 'Unexpected server error', type: ApiErrorResponseDto })
+  @Post('/setteacher/:teacherId')
   @Roles('STUDENT')
   @UseGuards(RolesGuard)
   setTeacher(

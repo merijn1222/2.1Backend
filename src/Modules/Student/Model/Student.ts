@@ -1,4 +1,9 @@
-export type Student = {
-    id: string;
-    name: string;
+import { ApiProperty } from '@nestjs/swagger';
+
+export class Student {
+    @ApiProperty()
+    id!: string;
+
+    @ApiProperty()
+    name!: string;
 }

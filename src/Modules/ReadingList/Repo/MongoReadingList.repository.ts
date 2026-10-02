@@ -10,6 +10,7 @@ import {
   ReadingListDocument,
 } from '../Models/ReadingList.schema.js';
 import type {
+  AddRatingResult,
   AddLiteratureResult,
   IReadingListRepository,
   RemoveLiteratureResult,
@@ -69,7 +70,7 @@ export class MongoReadingListRepository
             },
           },
         },
-        { new: true, runValidators: true },
+        { returnDocument: 'after', runValidators: true },
       )
       .populate('items.literatureId')
       .exec();
@@ -107,13 +108,54 @@ export class MongoReadingListRepository
             items: { literatureId: literatureObjectId },
           },
         },
-        { new: true, runValidators: true },
+        { returnDocument: 'after', runValidators: true },
       )
       .populate('items.literatureId')
       .exec();
 
     if (readingList) {
       return { status: 'removed', readingList };
+    }
+
+    const existingReadingList = await this.readingListModel
+      .findOne({ studentId })
+      .select({ _id: 1 })
+      .lean()
+      .exec();
+
+    if (!existingReadingList) {
+      return { status: 'reading-list-not-found' };
+    }
+
+    return { status: 'literature-not-in-list' };
+  }
+
+  async addRating(
+    studentId: string,
+    literatureId: string,
+    rating: number,
+    read: boolean,
+  ): Promise<AddRatingResult> {
+    const literatureObjectId = new Types.ObjectId(literatureId);
+    const readingList = await this.readingListModel
+      .findOneAndUpdate(
+        {
+          studentId,
+          'items.literatureId': literatureObjectId,
+        },
+        {
+          $set: {
+            'items.$.rating': rating,
+            'items.$.read': read,
+          },
+        },
+        { returnDocument: 'after', runValidators: true },
+      )
+      .populate('items.literatureId')
+      .exec();
+
+    if (readingList) {
+      return { status: 'rated', readingList };
     }
 
     const existingReadingList = await this.readingListModel

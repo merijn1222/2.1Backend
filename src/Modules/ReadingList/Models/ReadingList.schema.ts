@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { Literature } from '../../Literature/Models/Literature.schema.js';
 
-@Schema({ _id: false })
+@Schema({ _id: false, versionKey: false })
 export class ReadingListItem {
+	@ApiProperty({ type: () => Literature, description: 'Populated literature item' })
 	@Prop({
 		type: MongooseSchema.Types.ObjectId,
 		ref: 'Literature',
@@ -10,9 +13,11 @@ export class ReadingListItem {
 	})
 	literatureId: Types.ObjectId;
 
+	@ApiProperty()
 	@Prop({ type: Boolean, required: true })
 	read: boolean;
 
+	@ApiProperty({ required: false })
 	@Prop({
 		type: Number,
 		min: 1,
@@ -25,11 +30,16 @@ export class ReadingListItem {
 const ReadingListItemSchema =
 	SchemaFactory.createForClass(ReadingListItem);
 
-@Schema()
+@Schema({ versionKey: false })
 export class ReadingList {
+	@ApiProperty({ type: String, description: 'MongoDB ObjectId' })
+	_id!: Types.ObjectId;
+
+	@ApiProperty()
 	@Prop({ type: String, required: true, unique: true, index: true })
 	studentId: string;
 
+	@ApiProperty({ type: [ReadingListItem] })
 	@Prop({ type: [ReadingListItemSchema], default: [] })
 	items: ReadingListItem[];
 }

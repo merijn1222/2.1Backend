@@ -78,7 +78,7 @@ export class AuthService {
       response = await this.repo.createUser(dto);
 
       if (!response.studentId) {
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException('Fout bij gebruiker aanmaken');
       }
 
       await this.readingListRepo.createReadingList(response.studentId);
